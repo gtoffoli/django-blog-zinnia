@@ -4,6 +4,7 @@ from django.contrib.admin.widgets import RelatedFieldWidgetWrapper
 from django.utils.translation import gettext_lazy as _
 
 from mptt.forms import TreeNodeChoiceField
+from tinymce.widgets import TinyMCE
 
 from zinnia.admin.fields import MPTTModelMultipleChoiceField
 from zinnia.admin.widgets import MPTTFilteredSelectMultiple
@@ -11,7 +12,6 @@ from zinnia.admin.widgets import MiniTextarea
 from zinnia.admin.widgets import TagAutoComplete
 from zinnia.models.category import Category
 from zinnia.models.entry import Entry
-
 
 class CategoryAdminForm(forms.ModelForm):
     """
@@ -76,4 +76,5 @@ class EntryAdminForm(forms.ModelForm):
             'lead': MiniTextarea,
             'excerpt': MiniTextarea,
             'image_caption': MiniTextarea,
+            'content': TinyMCE,
         }

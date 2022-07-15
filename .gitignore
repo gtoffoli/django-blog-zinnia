@@ -21,3 +21,4 @@ django_blog_zinnia.egg-info/
 .idea
 dist/
 demo_static/
+.*
