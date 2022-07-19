@@ -5,7 +5,7 @@
 {% load i18n %}
 {# load tinymce_tags #}
 
-{% block meta-description %}{% trans "Create or update entry" %}{% endblock meta-description %}
+{% block meta-description %}{% if entry %}{% trans "update a blog entry"|capfirst %}{% else %}{% trans "create a blog entry"|capfirst %}{% endif %}{% endblock meta-description %}
 
 {% block title %}{% trans "Create or update entry" %}{% endblock title %}
 
@@ -16,7 +16,7 @@
 {% endblock script %}
 
 {% block content %}
-<h1>{% trans "create or update blog entry"|capfirst %}</h1>
+<h1>{% if entry %}{% trans "update a blog entry"|capfirst %}{% else %}{% trans "create a blog entry"|capfirst %}{% endif %}</h1>
 
  <form method="post" action="{{ action }}">
     {% csrf_token %}
@@ -34,7 +34,7 @@
     <div style="margin-bottom: 10px;">
       <button type="submit" name="continue" id="continue" value="continue" class="btn btn-default">{% trans "save"|capfirst %}</button>&nbsp;
       <button type="submit" name="save" id="save" value="save" class="btn btn-default">{% trans "save and exit"|capfirst %}</button>&nbsp;
-      <a href="{{go_caller}}" name="cancel" id="cancel" value="cancel" class="btn btn-default like-btn-default">{% trans "exit without saving"|capfirst %}</a>
+      <a href="{% if entry %}/weblog/entry/{{ entry.pk }}/{% else %}{{ go_caller }}{% endif %}" name="cancel" id="cancel" value="cancel" class="btn btn-default like-btn-default">{% trans "exit without saving"|capfirst %}</a>
     </div>
  </form>
 {% endblock content %}

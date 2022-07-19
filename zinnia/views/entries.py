@@ -1,5 +1,5 @@
 """Views for Zinnia entries"""
-# from django.views.generic import CreateView, UpdateView
+from django.conf import settings
 from django.views.generic.dates import BaseDateDetailView
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
@@ -44,32 +44,8 @@ class EntryDetail(EntryCacheMixin,
     and login protections and restricted preview.
     """
 
-""" see also:
-https://stackoverflow.com/questions/17192737/django-class-based-view-for-both-create-and-update
-https://chriskief.com/2015/01/19/create-or-update-with-a-django-modelform/
-"""
 
-"""
-class EntryEditMixin(TemplateResponseMixin):
-    pass
-
-class EntryCreate(EntryEditMixin, CreateView):
-    form_class = EntryEditForm
-    template_name = "zinnia/entry_edit.html"
-    # fields = ['title', 'status', 'content', 'sites', 'comment_enabled',]
-    initial = {'status': DRAFT, 'sites': [1], 'comment_enabled': False,}
-    success_url="/weblog/"
-
-
-class EntryUpdate(EntryEditMixin, UpdateView):
-    form_class = EntryEditForm
-    template_name = "zinnia/entry_edit.html"
-    fields = ['id']
-    success_url="/weblog/"
-"""
-
-@staff_member_required
-def EntryCreate(request):
+def EntryCreate(request, sites=[settings.SITE_ID]):
     form_class = EntryEditForm
     template_name = "zinnia/entry_edit.html"
     if request.POST:
@@ -90,16 +66,16 @@ def EntryCreate(request):
         else:
             data_dict['action'] = '/weblog/entry/new/'
     else:
-        form = EntryEditForm(initial={'status': DRAFT, 'sites': [1], 'comment_enabled': False,})
+        form = EntryEditForm(initial={'status': DRAFT, 'sites': sites, 'comment_enabled': False,})
         data_dict = {'form': form, 'action': '/weblog/entry/new/'}
     return render(request, template_name, data_dict)
 
-@staff_member_required
+
 def EntryView(request, entry_id):
     entry = get_object_or_404(Entry, id=entry_id)
     return HttpResponseRedirect(entry.get_absolute_url())
 
-@staff_member_required
+
 def EntryUpdate(request, entry_id=None):
     form_class = EntryEditForm
     template_name = "zinnia/entry_edit.html"
@@ -116,12 +92,13 @@ def EntryUpdate(request, entry_id=None):
             if request.POST.get('save', ''): 
                 return HttpResponseRedirect(entry.get_absolute_url())
             else:
+                data_dict['entry'] = entry
                 data_dict['action'] = '/weblog/entry/{}/update/'.format(entry_id)
                 return render(request, template_name, data_dict)
     else:
         entry = get_object_or_404(Entry, id=entry_id)
         form = EntryEditForm(instance=entry)
         action = '/weblog/entry/{}/update/'.format(entry_id)
-        data_dict = {'form': form, 'action': action}
+        data_dict = {'form': form, 'entry': entry, 'action': action}
         return render(request, template_name, data_dict)
 
