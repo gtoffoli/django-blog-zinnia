@@ -60,7 +60,7 @@ def EntryCreate(request, sites=[settings.SITE_ID]):
             entry_id = entry.id
             if request.POST.get('save', ''): 
                 return HttpResponseRedirect(entry.get_absolute_url())
-            else:
+            else: # save and continue
                 data_dict['action'] = '/weblog/entry/{}/update/'.format(entry_id)
                 return render(request, template_name, data_dict)
         else:
@@ -76,25 +76,24 @@ def EntryView(request, entry_id):
     return HttpResponseRedirect(entry.get_absolute_url())
 
 
-def EntryUpdate(request, entry_id=None):
+def EntryUpdate(request, entry_id):
     form_class = EntryEditForm
     template_name = "zinnia/entry_edit.html"
     if request.POST:
-        entry_id = request.POST.get('id', '')
         entry = get_object_or_404(Entry, id=entry_id)
         form = form_class(request.POST, instance=entry)
-        data_dict = {'form': form}
+        data_dict = {'form': form, 'entry': entry, 'action': '/weblog/entry/{}/update/'.format(entry_id)}
         if form.is_valid():
             entry = form.save()
             author = Author.objects.get(username=request.user.username)
             entry.authors.add(author)
-            entry_id = entry.id
             if request.POST.get('save', ''): 
                 return HttpResponseRedirect(entry.get_absolute_url())
-            else:
+            else: # save and continue
                 data_dict['entry'] = entry
-                data_dict['action'] = '/weblog/entry/{}/update/'.format(entry_id)
                 return render(request, template_name, data_dict)
+        else:
+            return render(request, template_name, data_dict)
     else:
         entry = get_object_or_404(Entry, id=entry_id)
         form = EntryEditForm(instance=entry)

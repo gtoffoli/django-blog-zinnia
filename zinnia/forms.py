@@ -17,9 +17,7 @@ class EntryEditForm(forms.ModelForm):
         EntryEditForm's Meta.
         """
         model = Entry
-        fields = ['id', 'slug', 'title', 'lead', 'excerpt', 'content', 'status', 'comment_enabled', 'sites',]
-    id = forms.CharField(required=False, widget=forms.HiddenInput())
-    slug = forms.CharField(required=False, widget=forms.HiddenInput())
+        fields = ['title', 'lead', 'excerpt', 'content', 'status', 'comment_enabled', 'sites',]
     title = forms.CharField(required=True, label=_('title'), widget=forms.TextInput(attrs={'class':'form-control',}))
     lead = forms.CharField(required=False, label=_('lead'), widget=forms.TextInput(attrs={'class':'form-control',}))
     excerpt = forms.CharField(required=False, label=_('excerpt'), widget=forms.TextInput(attrs={'class':'form-control',}))
