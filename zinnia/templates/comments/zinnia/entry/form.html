@@ -1,4 +1,6 @@
-{% load comments i18n %}
+{% load comments zinnia i18n %}
+
+{% if user|zinnia_can_comment_entry:object %}
 <form action="{% comment_form_target %}" method="post" id="comment-form">
   <div>{% csrf_token %}</div>
   {% if form.non_field_errors %}
@@ -31,3 +33,4 @@
     </p>
   </fieldset>
 </form>
+{% endif %}

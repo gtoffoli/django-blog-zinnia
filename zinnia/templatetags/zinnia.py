@@ -38,6 +38,7 @@ from ..models.entry import Entry
 from ..settings import ENTRY_LOOP_TEMPLATES
 from ..settings import PROTOCOL
 from ..templating import loop_template_list
+from zinnia.permissions import perms
 
 
 WIDONT_REGEXP = re.compile(
@@ -508,3 +509,25 @@ def zinnia_statistics(template='zinnia/tags/statistics.html'):
             'entries_per_month': entries_per_month,
             'comments_per_entry': comments_per_entry,
             'linkbacks_per_entry': linkbacks_per_entry}
+
+
+@register.filter
+def zinnia_can_create_entry(user):
+    """
+    Check if the user can create a new entry (a blog article).
+    """
+    return perms.can_create_entry(user)
+
+@register.filter
+def zinnia_can_change_entry(user, entry):
+    """
+    Check if the user is am author of the entry (or, perhaps, is superuser).
+    """
+    return perms.can_change_entry(user, entry)
+
+@register.filter
+def zinnia_can_comment_entry(user, entry):
+    """
+    Check if the user can comment the entry.
+    """
+    return perms.can_comment_entry(user, entry)
